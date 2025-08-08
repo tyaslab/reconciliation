@@ -51,4 +51,5 @@ func printResult(result *app.Result) {
 	fmt.Printf("total matched: %d\n", result.Matched)
 	fmt.Printf("total system transaction unmatched: %d\n", result.SystemUnmatched)
 	fmt.Printf("total bank unmatched: %d\n", result.BankUnmatched)
+	fmt.Printf("total discrepancies: %f\n", result.Discrepancies)
 }
