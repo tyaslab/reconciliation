@@ -3,22 +3,16 @@ package app
 import (
 	"encoding/csv"
 	"fmt"
+	"io"
 	"math"
-	"os"
 	"time"
 )
 
-func ReadCSV(filename string, accountType AccountType, dateFrom, dateTo time.Time) ([]Transaction, error) {
-	file, err := os.Open(filename)
-	if err != nil {
-		return nil, fmt.Errorf("error opening file %s: %v", filename, err)
-	}
-	defer file.Close()
-
-	reader := csv.NewReader(file)
+func ReadCSV(stream io.Reader, accountType AccountType, dateFrom, dateTo time.Time) ([]Transaction, error) {
+	reader := csv.NewReader(stream)
 	records, err := reader.ReadAll()
 	if err != nil {
-		return nil, fmt.Errorf("error reading CSV file %s: %v", filename, err)
+		return nil, fmt.Errorf("error reading CSV file: %v", err)
 	}
 
 	data := []Transaction{}
