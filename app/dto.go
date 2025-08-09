@@ -6,11 +6,11 @@ import (
 )
 
 type Result struct {
-	Processed       int
-	Matched         int
-	SystemUnmatched int
-	BankUnmatched   int
-	Discrepancies   float64
+	Processed       int     `json:"processed"`
+	Matched         int     `json:"matched"`
+	SystemUnmatched int     `json:"system_unmatched"`
+	BankUnmatched   int     `json:"bank_unmatched"`
+	Discrepancies   float64 `json:"discrepancies"`
 }
 
 type EntryType string

@@ -17,16 +17,7 @@ func HandlerReconcile(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// transaction
-
-	transactionFile, _, err := r.FormFile("transaction_file")
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-
-	defer transactionFile.Close()
-
+	// filter date
 	dateFrom := r.FormValue("date_from")
 	if dateFrom == "" {
 		http.Error(w, "date_from is required", http.StatusBadRequest)
@@ -39,17 +30,28 @@ func HandlerReconcile(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	dtFrom, err := time.Parse(DATE_TIME_LAYOUT, dateFrom)
+	dtFrom, err := time.Parse(DATE_LAYOUT, dateFrom)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	dtTo, err := time.Parse(DATE_TIME_LAYOUT, dateTo)
+	dtTo, err := time.Parse(DATE_LAYOUT, dateTo)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
+
+	dtTo = time.Date(dtTo.Year(), dtTo.Month(), dtTo.Day(), 23, 59, 59, 999_999_999, dtTo.Location())
+
+	// transaction
+	transactionFile, _, err := r.FormFile("transaction_file")
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	defer transactionFile.Close()
 
 	transaction, err := ReadCSV(transactionFile, TransactionAccount, dtFrom, dtTo)
 	if err != nil {
@@ -72,6 +74,7 @@ func HandlerReconcile(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// compare
 	result := CompareList(transaction, bankStatement)
 
 	resultJson, err := json.Marshal(result)

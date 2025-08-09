@@ -10,7 +10,7 @@ import (
 func main() {
 	http.HandleFunc("/reconcile", app.HandlerReconcile)
 
-	address := "localhost:5000"
+	address := "127.0.0.1:5000"
 	fmt.Printf("server started at %s\n", address)
 
 	err := http.ListenAndServe(address, nil)

@@ -75,24 +75,27 @@ func CompareList(transactionAccountList, bankAccountList []Transaction) *Result 
 	}
 }
 
-func getLongestCommonSubsequence(transactionListA, transactionListB []Transaction) *LCSResult {
+func getLongestCommonSubsequence(listA, listB []Transaction) *LCSResult {
 	lcsResultList := []LCSResult{}
 
 	a := 0
 	b := 0
 
-	matchA := 0
-	matchB := 0
+	matchA := -1
+	matchB := -1
 
 	count := 0
 
-	for a < len(transactionListA) && b < len(transactionListB) {
-		if transactionListA[a].Amount == transactionListB[b].Amount {
+	for a < len(listA) && b < len(listB) {
+		if listA[a].Amount == listB[b].Amount {
 			count += 1
+			if matchA < 0 {
+				matchA = a
+			}
 
-			// save last matched position
-			matchA = a
-			matchB = b
+			if matchB < 0 {
+				matchB = b
+			}
 
 			// move a and b when amount equals
 			a += 1
@@ -108,23 +111,25 @@ func getLongestCommonSubsequence(transactionListA, transactionListB []Transactio
 			}
 
 			count = 0 // reset count when a and b are different
-			if b < (len(transactionListB) - 1) {
+			if b < (len(listB) - 1) {
 				b += 1
 			} else {
 				a += 1
 				b = matchB + 1
 			}
+			// also reset matchA and B
+			matchA = -1
+			matchB = -1
 		}
 	}
 
 	if count > 0 {
-		// this means all are matched
+		// proceed last matched after iteration ends
 		lcsResultList = append(lcsResultList, LCSResult{
-			IndexA: matchA - 1,
-			IndexB: matchB - 1,
+			IndexA: matchA,
+			IndexB: matchB,
 			Count:  count,
 		})
-
 	}
 
 	if len(lcsResultList) == 0 {
